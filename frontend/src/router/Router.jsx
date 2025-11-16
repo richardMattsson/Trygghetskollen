@@ -1,28 +1,18 @@
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { createHashRouter, Outlet, RouterProvider } from "react-router-dom";
-import { lazyWithPreload } from "react-lazy-with-preload";
+
 import "./Router.css";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-const Home = lazyWithPreload(() => import("../pages/Home"));
-const Test = lazyWithPreload(() => import("../pages/Test"));
-const Profile = lazyWithPreload(() => import("../pages/Profile"));
-const LoginPage = lazyWithPreload(() => import("../pages/LoginPage"));
-const Register = lazyWithPreload(() => import("../pages/Register"));
-const PrivacyPolicy = lazyWithPreload(() => import("../pages/PrivacyPolicy"));
-const TermsAndConditions = lazyWithPreload(() =>
-  import("../pages/TermsAndConditions")
-);
-
-Home.preload();
-Test.preload();
-Profile.preload();
-LoginPage.preload();
-Register.preload();
-PrivacyPolicy.preload();
-TermsAndConditions.preload();
+import Home from "../pages/Home";
+const Test = lazy(() => import("../pages/Test"));
+import Profile from "../pages/Profile";
+import LoginPage from "../pages/LoginPage";
+import Register from "../pages/Register";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import TermsAndConditions from "../pages/TermsAndConditions";
 
 function Router() {
   const router = createHashRouter([
@@ -39,11 +29,7 @@ function Router() {
       children: [
         {
           path: "/",
-          element: (
-            <Suspense fallback={<div>Laddar...</div>}>
-              <Home />
-            </Suspense>
-          ),
+          element: <Home />,
         },
         {
           path: "/test/:question?/:number?",
@@ -55,43 +41,23 @@ function Router() {
         },
         {
           path: "/profile",
-          element: (
-            <Suspense fallback={<div>Laddar...</div>}>
-              <Profile />
-            </Suspense>
-          ),
+          element: <Profile />,
         },
         {
           path: "/login",
-          element: (
-            <Suspense fallback={<div>Laddar...</div>}>
-              <LoginPage />
-            </Suspense>
-          ),
+          element: <LoginPage />,
         },
         {
           path: "/register",
-          element: (
-            <Suspense fallback={<div>Laddar...</div>}>
-              <Register />
-            </Suspense>
-          ),
+          element: <Register />,
         },
         {
           path: "/privacy-policy",
-          element: (
-            <Suspense fallback={<div>Laddar...</div>}>
-              <PrivacyPolicy />
-            </Suspense>
-          ),
+          element: <PrivacyPolicy />,
         },
         {
           path: "/terms-and-conditions",
-          element: (
-            <Suspense fallback={<div>Laddar...</div>}>
-              <TermsAndConditions />
-            </Suspense>
-          ),
+          element: <TermsAndConditions />,
         },
       ],
     },

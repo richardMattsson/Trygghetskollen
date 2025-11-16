@@ -3,15 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { UserContext } from "../contexts/UserContext";
-// import { useLocation, useParams } from "react-router-dom";
 import { AppBar, Toolbar, Button, Box } from "@mui/material";
 
 import "./Navbar.css";
 import { ResultContext } from "../contexts/ResultContext";
 
 function Navbar() {
-  // const { pathname } = useLocation();
-  // const { question } = useParams();
   const { isLoggedIn, setIsLoggedIn } = useContext(UserContext);
   const { setTotalScore } = useContext(ResultContext);
   const { setUser } = useContext(UserContext);
