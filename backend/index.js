@@ -11,6 +11,7 @@ const client = new Client({
 });
 
 client.connect();
+client.query("SET client_encoding = 'UTF8'");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
