@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import { Link } from "react-router-dom";
 
 function TermsAndConditions() {
   return (
@@ -46,8 +47,9 @@ function TermsAndConditions() {
             <Typography variant="body1" component="div">
               Vid registrering sparar vi den information du lämnar för att kunna
               hantera konto och visa dina rapporter. All behandling av
-              personuppgifter sker enligt vår Integritetspolicy och gällande lag
-              (GDPR).
+              personuppgifter sker enligt vår{" "}
+              <Link to={"/privacy-policy"}>Integritetspolicy</Link> och gällande
+              lag (GDPR).
             </Typography>
 
             <Typography variant="h5" component="div">

@@ -24,19 +24,19 @@ function PrivacyPolicy() {
             </Typography>
             <Typography variant="body1" component="div">
               Vi behöver spara och behandla personuppgifter om dig, så som
-              användarnamn. Syftet med en sådan behandling är för att kunna
-              spara resultat från gjorda tester.
+              användarnamn och lösenord. Syftet med en sådan behandling är för
+              att kunna spara resultat från gjorda tester.
             </Typography>
             <Typography variant="body1" component="div">
               Vi har fått dina uppgifter då du skapade ett konto hos oss. Detta
               är ett krav för att kunna logga in och spara resultat från gjorda
               tester. Vi tillämpar vid var tid gällande integritetslagstiftning
               vid all behandling av personuppgifter. Den rättsliga grunden för
-              att behandla dina personuppgifter är samtycke. Du har när som
-              helst rätt att återkalla ditt samtycke till behandlingen. Ett
+              att behandla dina personuppgifter är avtal med den registrerade.
+              Du har när som helst rätt att säga upp ditt avtal med oss. Ett
               återkallande påverkar inte lagligheten av behandlingen innan
-              samtycket återkallades. Dina uppgifter kommer att sparas tills
-              dess att Trygghetskollen läggs ned senast den 30 november 2025.
+              avtalet återkallades. Dina uppgifter kommer att sparas tills dess
+              att Trygghetskollen läggs ned senast den 30 november 2025.
             </Typography>
             <Typography variant="body1" component="div">
               De personuppgifter vi behandlar om dig delas med
