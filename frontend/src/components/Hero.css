@@ -1,24 +1,31 @@
 .hero-section {
   flex-grow: 1;
-  min-height: 275px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 40;
+  padding: 2rem;
+  gap: 40px;
 }
 
 .hero-div {
   display: grid;
   grid-template-columns: 1fr 4fr;
   align-items: center;
-  max-width: 800px;
+  width: min(100%, 800px);
 }
 
 @media (max-width: 600px) {
+  .hero-section {
+    gap: 10px;
+    padding: 1rem;
+  }
   .hero-div {
     display: flex;
-    flex-direction: column;
-    margin: 40px;
+
+    justify-content: center;
+    align-items: center;
+
+    margin: 20px;
   }
 }

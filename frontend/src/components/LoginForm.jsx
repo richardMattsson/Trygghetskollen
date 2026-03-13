@@ -68,7 +68,14 @@ function LoginForm({ setUser, setSnackbar }) {
         mt: 5,
       }}
     >
-      <Card sx={{ maxWidth: 400, width: "100%", padding: 3, boxShadow: 6 }}>
+      <Card
+        sx={{
+          maxWidth: { xs: 300, sm: 400 },
+          width: "100%",
+          padding: 3,
+          boxShadow: 6,
+        }}
+      >
         <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography variant="h5" component="h1" align="center" gutterBottom>
             Logga in

@@ -13,14 +13,13 @@ function Home() {
     <>
       <Hero />
       {totalScore && <Result />}
-
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: "3fr 1fr",
-          gap: 3,
+          gridTemplateColumns: { xs: "1fr", md: "3fr 1fr" },
+          gap: { xs: 2, md: 3 },
           mt: 2,
-          p: 2,
+          p: { xs: 1, sm: 2 },
         }}
       >
         <Box>

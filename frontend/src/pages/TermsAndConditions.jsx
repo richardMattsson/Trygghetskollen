@@ -15,12 +15,12 @@ function TermsAndConditions() {
         padding: "2rem",
       }}
     >
-      <Box sx={{ width: "50%" }}>
+      <Box sx={{ width: { xs: "75%", sm: "60%", md: "50%" } }}>
         <Card sx={{ padding: 5, mb: 4 }}>
           <CardContent
             sx={{ gap: 3, display: "flex", flexDirection: "column" }}
           >
-            <Typography variant="h2" component="div">
+            <Typography variant="h2" component="div" fontSize={{ xs: 30 }}>
               Användarvillkor
             </Typography>
 

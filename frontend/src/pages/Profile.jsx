@@ -46,7 +46,7 @@ function Profile() {
         navigate("/");
       })
       .catch((err) =>
-        setSnackbar({ open: true, message: err.message, severity: "error" })
+        setSnackbar({ open: true, message: err.message, severity: "error" }),
       );
     setOpenDeleteDialog(false);
   };
@@ -56,6 +56,7 @@ function Profile() {
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", sm: "row", md: "row" },
           gap: 5,
           justifyContent: "center",
           alignItems: "flex-start",

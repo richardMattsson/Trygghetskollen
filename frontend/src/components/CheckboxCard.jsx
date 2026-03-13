@@ -31,7 +31,7 @@ function CheckboxCard() {
       : setChecked(event.target.name);
 
     const updatedArray = result.filter(
-      (item) => item.question !== questionNumber
+      (item) => item.question !== questionNumber,
     );
 
     updatedArray.push({
@@ -78,7 +78,10 @@ function CheckboxCard() {
   ];
 
   return (
-    <Card variant="outlined" sx={{ width: "500px" }}>
+    <Card
+      variant="outlined"
+      sx={{ width: "100%", maxWidth: { xs: 360, sm: 500 }, mx: "auto" }}
+    >
       <CardContent>
         {error && <p>Något gick fel...</p>}
         {isPending && (

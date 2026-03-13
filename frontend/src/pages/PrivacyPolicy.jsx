@@ -14,12 +14,16 @@ function PrivacyPolicy() {
         padding: "2rem",
       }}
     >
-      <Box sx={{ width: "50%" }}>
+      <Box
+        sx={{
+          width: { xs: "95%", sm: "75%", md: "65%" },
+        }}
+      >
         <Card sx={{ padding: 5, mb: 4 }}>
           <CardContent
             sx={{ gap: 3, display: "flex", flexDirection: "column" }}
           >
-            <Typography variant="h2" component="div">
+            <Typography variant="h2" component="div" fontSize={{ xs: 32 }}>
               Integritetspolicy
             </Typography>
             <Typography variant="body1" component="div">

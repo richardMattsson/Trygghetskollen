@@ -28,10 +28,11 @@ function Test() {
       <Card
         variant="outlined"
         sx={{
-          minWidth: "600px",
+          width: "100%",
+          maxWidth: { xs: 360, sm: 520, md: 600 },
           display: testChoiceContainer,
-          justifyContent: "center",
-          border: "1px solid blue",
+          mx: "auto",
+          px: { xs: 1, sm: 2 },
         }}
       >
         <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>

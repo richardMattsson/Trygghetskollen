@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./Hero.css";
 import { useContext } from "react";
 import { ResultContext } from "../contexts/ResultContext";
+import { Typography } from "@mui/material";
 
 function Hero() {
   const navigate = useNavigate();
@@ -21,20 +22,28 @@ function Hero() {
         <SafetyCheckIcon
           className="hero-child"
           color="secondary"
-          sx={{ fontSize: 100 }}
+          sx={{
+            fontSize: { xs: 64, sm: 84, md: 100 },
+          }}
         />
-        <p className="secondary-color hero-child" style={{ fontSize: "24px" }}>
+        <Typography
+          className="secondary-color hero-child"
+          sx={{
+            fontSize: { xs: 18, sm: 20, md: 24 },
+          }}
+          mx={{ xs: 5, sm: 7, md: 10 }}
+        >
           <span style={{ fontWeight: 700 }}>Trygghetskollen</span> hjälper dig
           att undvika eventuella bedrägeriförsök och ger tips på hur du kan
           skydda dig.
-        </p>
+        </Typography>
       </div>
       <div>
         <Button
           onClick={handleClick}
           variant="contained"
           color="contrast"
-          size="medium"
+          size={"medium"}
           sx={{
             ":hover": { bgcolor: "contrast.light" },
             fontWeight: 600,
