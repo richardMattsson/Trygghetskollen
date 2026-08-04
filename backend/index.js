@@ -1,21 +1,19 @@
 const express = require("express");
-const path = require("path");
 const dotenv = require("dotenv");
-const { Client } = require("pg");
+const { Pool } = require("pg");
+const bcrypt = require("bcrypt");
 const app = express();
 
 dotenv.config();
 
-const client = new Client({
+const client = new Pool({
   connectionString: process.env.PGURI,
 });
-
-client.connect();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.get("/api/users", async (_req, res) => {
   try {
@@ -64,11 +62,16 @@ app.get("/api/test/telefon", async (_req, res) => {
 
 app.get("/api/testResults/:id", async (req, res) => {
   const { id } = req.params;
-  const { rows } = await client.query(
-    `SELECT * FROM testResults WHERE user_id = $1;`,
-    [id]
-  );
-  res.send(rows);
+  try {
+    const { rows } = await client.query(
+      `SELECT * FROM testResults WHERE user_id = $1;`,
+      [id],
+    );
+    res.send(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Något gick fel" });
+  }
 });
 
 app.post("/api/testResult/:id", async (req, res) => {
@@ -77,7 +80,7 @@ app.post("/api/testResult/:id", async (req, res) => {
   try {
     const { rows } = await client.query(
       `INSERT INTO testResults (user_id, result) VALUES ($1, $2) RETURNING *`,
-      [id, result]
+      [id, result],
     );
 
     res.send(rows);
@@ -122,7 +125,8 @@ app.post("/api/users", async (req, res) => {
         .json({ message: "Det finns redan ett konto med samma användarnamn" });
     }
 
-    const insertResult = await client.query(insertSql, [username, password]);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const insertResult = await client.query(insertSql, [username, hashedPassword]);
     const newUser = insertResult.rows[0];
 
     res.status(201).json({
@@ -141,10 +145,11 @@ app.post("/api/login", async (req, res) => {
   try {
     const result = await client.query(
       "SELECT * FROM users WHERE username = $1",
-      [username]
+      [username],
     );
 
-    if (result.rows.length === 0 || result.rows[0].password !== password) {
+    const passwordMatch = result.rows.length > 0 && await bcrypt.compare(password, result.rows[0].password);
+    if (!passwordMatch) {
       return res
         .status(401)
         .json({ message: "Fel användarnamn eller lösenord" });
@@ -162,14 +167,14 @@ app.post("/api/login", async (req, res) => {
 app.post("/api/wallPosts", async (req, res) => {
   const { sender, comment, rating } = req.body;
 
-  if (!sender && !comment && !rating) {
+  if (!sender || !comment || !rating) {
     return res.status(400).json({ message: "Alla fält måste fyllas i" });
   }
 
   try {
     const { rows } = await client.query(
       `INSERT INTO wallPosts (phone_number, free_text, severity) VALUES ($1, $2, $3) RETURNING * `,
-      [sender, comment, rating]
+      [sender, comment, rating],
     );
     res.send(rows);
   } catch (err) {
@@ -200,13 +205,14 @@ app.put("/api/update/:id", async (req, res) => {
   }
 
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const sql = `
       UPDATE users
       SET username = $1, password = $2
       WHERE id = $3
       RETURNING id, username;
     `;
-    const params = [username, password, id];
+    const params = [username, hashedPassword, id];
 
     const result = await client.query(sql, params);
 
@@ -229,7 +235,7 @@ app.delete("/api/users/:id", async (req, res) => {
   try {
     const { rows } = await client.query(
       `DELETE FROM users WHERE id = $1 RETURNING id, username`,
-      [id]
+      [id],
     );
 
     if (rows.length === 0) {
@@ -245,8 +251,6 @@ app.delete("/api/users/:id", async (req, res) => {
     res.status(500).json({ message: "Något gick fel vid borttagning" });
   }
 });
-
-app.use(express.static(path.join(path.resolve(), "dist")));
 
 app.listen(port, () => {
   console.log(`Redo på port http://localhost:${port}/`);
