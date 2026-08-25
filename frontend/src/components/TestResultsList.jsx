@@ -12,7 +12,7 @@ function TestResultsList() {
   const { data, isPending, error } = useQuery({
     queryKey: ["testResults"],
     queryFn: () =>
-      fetch(`/api/testResults/${user.id}`).then((result) => result.json()),
+      fetch(`/api/testResult/${user.id}`).then((result) => result.json()),
   });
 
   return (

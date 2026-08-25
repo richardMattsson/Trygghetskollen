@@ -1,8 +1,13 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const { Pool } = require("pg");
-const bcrypt = require("bcrypt");
-const app = express();
+import express from "express";
+import bcrypt from "bcrypt";
+import userRoutes from "./Routes/userRoutes";
+import wallpostsRoutes from "./Routes/wallpostsRoutes";
+import testRoutes from "./Routes/testRoutes";
+import testResultRoutes from "./Routes/testResultRoutes";
+
+import dotenv from "dotenv";
+import { Pool } from "pg";
+import { timeLog } from "./middleware/timelog";
 
 dotenv.config();
 
@@ -10,84 +15,20 @@ const client = new Pool({
   connectionString: process.env.PGURI,
 });
 
+const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const port = process.env.PORT || 3001;
 
-app.get("/api/users", async (_req, res) => {
-  try {
-    const { rows } = await client.query("SELECT * FROM users;");
-    res.send(rows);
-  } catch (err) {
-    console.log(err);
-  }
-});
+app.use("/api/users", timeLog, userRoutes);
 
-app.get("/api/wallPosts", async (_req, res) => {
-  try {
-    const { rows } = await client.query("SELECT * FROM wallPosts;");
-    res.send(rows);
-  } catch (err) {
-    console.log(err);
-  }
-});
+app.use("/api/wallPosts", timeLog, wallpostsRoutes);
 
-app.get("/api/test", async (_req, res) => {
-  try {
-    const { rows } = await client.query("SELECT * FROM testQuestion;");
-    res.send(rows);
-  } catch (err) {
-    console.log(err);
-  }
-});
+app.use("/api/test", timeLog, testRoutes);
 
-app.get("/api/test/sms", async (_req, res) => {
-  try {
-    const { rows } = await client.query("SELECT * FROM testQuestion;");
-    res.send(rows);
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-app.get("/api/test/telefon", async (_req, res) => {
-  try {
-    const { rows } = await client.query("SELECT * FROM testQuestionPhone;");
-    res.send(rows);
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-app.get("/api/testResults/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const { rows } = await client.query(
-      `SELECT * FROM testResults WHERE user_id = $1;`,
-      [id],
-    );
-    res.send(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Något gick fel" });
-  }
-});
-
-app.post("/api/testResult/:id", async (req, res) => {
-  const { result } = req.body;
-  const { id } = req.params;
-  try {
-    const { rows } = await client.query(
-      `INSERT INTO testResults (user_id, result) VALUES ($1, $2) RETURNING *`,
-      [id, result],
-    );
-
-    res.send(rows);
-  } catch (err) {
-    res.send(err.message);
-  }
-});
+app.use("/api/testResult", timeLog, testResultRoutes);
 
 app.post("/api/users", async (req, res) => {
   const { username, password } = req.body;
@@ -126,7 +67,10 @@ app.post("/api/users", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const insertResult = await client.query(insertSql, [username, hashedPassword]);
+    const insertResult = await client.query(insertSql, [
+      username,
+      hashedPassword,
+    ]);
     const newUser = insertResult.rows[0];
 
     res.status(201).json({
@@ -139,8 +83,33 @@ app.post("/api/users", async (req, res) => {
   }
 });
 
+app.delete("/api/users/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { rows } = await client.query(
+      `DELETE FROM users WHERE id = $1 RETURNING id, username`,
+      [id],
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Användare hittades inte" });
+    }
+
+    res.status(200).json({
+      message: "Användare raderad",
+      data: rows[0],
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Något gick fel vid borttagning" });
+  }
+});
+
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
+
+  console.log(req.body);
 
   try {
     const result = await client.query(
@@ -148,7 +117,9 @@ app.post("/api/login", async (req, res) => {
       [username],
     );
 
-    const passwordMatch = result.rows.length > 0 && await bcrypt.compare(password, result.rows[0].password);
+    const passwordMatch =
+      result.rows.length > 0 &&
+      (await bcrypt.compare(password, result.rows[0].password));
     if (!passwordMatch) {
       return res
         .status(401)
@@ -161,24 +132,6 @@ app.post("/api/login", async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Något gick fel vid inloggning" });
-  }
-});
-
-app.post("/api/wallPosts", async (req, res) => {
-  const { sender, comment, rating } = req.body;
-
-  if (!sender || !comment || !rating) {
-    return res.status(400).json({ message: "Alla fält måste fyllas i" });
-  }
-
-  try {
-    const { rows } = await client.query(
-      `INSERT INTO wallPosts (phone_number, free_text, severity) VALUES ($1, $2, $3) RETURNING * `,
-      [sender, comment, rating],
-    );
-    res.send(rows);
-  } catch (err) {
-    res.send(err.message);
   }
 });
 
@@ -226,29 +179,6 @@ app.put("/api/update/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Något gick fel vid uppdatering" });
-  }
-});
-
-app.delete("/api/users/:id", async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const { rows } = await client.query(
-      `DELETE FROM users WHERE id = $1 RETURNING id, username`,
-      [id],
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "Användare hittades inte" });
-    }
-
-    res.status(200).json({
-      message: "Användare raderad",
-      data: rows[0],
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Något gick fel vid borttagning" });
   }
 });
 
