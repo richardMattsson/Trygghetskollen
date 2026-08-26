@@ -18,7 +18,7 @@ function ProfileForm({ user, setUser, setIsEditing, setSnackbar }) {
     }
 
     try {
-      const res = await fetch(`/api/update/${user.id}`, {
+      const res = await fetch(`/api/users/${user.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
